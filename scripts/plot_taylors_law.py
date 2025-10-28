@@ -18,7 +18,7 @@ vars_all = []
 flat_rescaled_afd_log10_all_environments = []
 for environment in data_utils.datasets_crossectional:
 
-    print(environment)
+    print(plot_utils.environment_name_dict[environment])
     environment_counts_np = data_utils.get_read_counts(environment, longitudinal_bool=False)
     rel_environment_counts_np = environment_counts_np/numpy.sum(environment_counts_np, axis=0)
     occupancy = numpy.sum(rel_environment_counts_np > 0, axis=1)/rel_environment_counts_np.shape[1]

@@ -7,6 +7,8 @@ import pyreadr
 import config
 
 
+import stats_utils
+from scipy.special import erfc
 
 
 #dataset_name_in_rdata = {'oral': 'oralcavity', 'Glacier': 'Glacier', 'Human gut': 'feces', 'River': 'River', 'Lake': 'Lake', 'Sludge': 'activatedsludge', 'Seawater':'seawater', 'Soil':'Environmental Terrestrial Soil'}
@@ -24,7 +26,7 @@ datasets_crossectional = ['Glacier', 'GUT', 'ORAL', 'Lake', 'Environmental Aquat
 
 
 
-def bin_x(x, n_bins=10, log10=True, normalize_counts=True):
+def bin_x(x, n_bins=10, log10=True):
 
     x = numpy.asarray(x)
     
@@ -34,12 +36,15 @@ def bin_x(x, n_bins=10, log10=True, normalize_counts=True):
     else:
         bin_edges = numpy.linspace(x.min(), x.max(), n_bins + 1)
     
-    counts, _ = numpy.histogram(x, bins=bin_edges)
+    counts, edges = numpy.histogram(x, bins=bin_edges)
 
-    if normalize_counts == True:
-        counts = counts/sum(counts)
+    bin_widths = numpy.diff(edges)
+    density = counts / numpy.sum(counts * bin_widths) 
+
+    #if normalize_counts == True:
+    #    counts = counts/sum(counts)
     
-    return counts, bin_edges
+    return counts, density, bin_edges
 
 
 def bin_xy(x, y, n_bins=10, log10_x=True, log10_y=True):
@@ -152,11 +157,78 @@ def get_processed_data():
     rdatapath = '%sdataestimate.RData' % config.data_directory
     result = pyreadr.read_r(rdatapath)
 
-    print(result)
+    proj = result['proj']
+    gamma_pars = result['gamma_pars']
+    mean_pars = result['mean_pars']
 
-    #dataestimate.Rdata
+    #dh = result[result['o'] > 0.999].copy()
+
+    return proj, gamma_pars, mean_pars
+
+
+
+def get_mad_grilli_data():
+
+    proj, gamma_pars, mean_pars = get_processed_data()
+
+    statp = gamma_pars.copy()
+
+    # Calculate log(f) and cutoff
+    statp["lf"] = numpy.log(statp["f"])
+    statp["cutoff"] = -100
+
+    nbin = 20
+
+    # Calculate df and bin index within each idall group
+    def compute_bins(g):
+        lf_min = g["lf"].min()
+        lf_max = g["lf"].max()
+        df = (lf_max - lf_min) / nbin
+        g["df"] = df
+        g["b"] = ((g["lf"] - lf_min) / df).astype(int)
+        return g
+
+    statp = statp.groupby("idall", group_keys=False).apply(compute_bins)
+
+    # Summarise idall, b, df
+    statp = (statp.groupby(["idall", "b", "df"], as_index=False).agg(lf=("lf", "mean"),cutoff=("cutoff", "mean"),n=("lf", "size")))
+
+    # Calculate p = n / sum(n) / df within each idall
+    statp["p"] = (statp.groupby("idall", group_keys=False).apply(lambda g: g["n"] / g["n"].sum() / g["df"]).reset_index(drop=True))
+
+    print(statp)
+
+    statp["xx"] = numpy.random.rand(len(statp))
+    merged = statp.merge(mean_pars, on="idall", how="left")
+    filtered = merged.query("lf > c + 0.15 and n > 10")
+
+    filtered = filtered.sort_values(["xx", "sname"], ignore_index=True)
+
+    # x and y vectors
+    x = (filtered["lf"] - filtered["mu"]) / numpy.sqrt(2 * filtered["sigma"]**2)
+    y = 10 ** (numpy.log10(filtered["p"]) - numpy.log10(0.5 * erfc((filtered["mu"] - filtered["c"]) / numpy.sqrt(2) / filtered["sigma"])) + 0.5 * numpy.log10(2 * numpy.pi))
+
+    x = x.to_numpy()
+    y = y.to_numpy()
+
+    df_xy = filtered.assign(x=x, y=y)
+    #df_xy[df_xy['sname'] == 'seawater'][['x', 'y']]
+
+
+    return df_xy
 
 
 
 
-get_processed_data()
+if __name__ == "__main__":
+
+
+    df_xy = get_mad_grilli_data()
+
+    print(set(df_xy['sname'].tolist()))
+
+    pairs = df_xy[['idall', 'sname']].drop_duplicates()
+    idall_sname = list(zip(pairs['idall'], pairs['sname']))
+
+    print(idall_sname)
+    print('Hmmmm')

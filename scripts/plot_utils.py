@@ -9,5 +9,6 @@ environment_facecolor_dict = {'activatedsludge':'none', 'Glacier':'none', 'River
 # edgecolot is just cmap
 environment_name_dict = {'oralcavity': 'Human oral', 'skin': 'Human skin', 'feces': 'Human gut', 'activatedsludge': 'Sludge', 'Glacier':'Glacier', 'River':'River', 'Environmental Terrestrial Soil':'Soil', 'ORAL':'Human oral', 'seawater':'Marine', 'Environmental Aquatic Marine':'Marine', 'VAGINAL':'Vaginal', 'Lake':'Lake', 'GUT':'Human gut'}
 
+sname_to_environment_dict = {'lake':'Lake', 'seawater':'Environmental Aquatic Marine', 'glacier':'Glacier', 'gut1':'GUT', 'oral1':'ORAL', 'sludge':'activatedsludge', 'river':'River', 'soil':'Environmental Terrestrial Soil'}
 
 
