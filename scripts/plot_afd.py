@@ -94,8 +94,10 @@ def plot_afd():
     #ax.set_ylim([min(flat_density_all), 1])
     ax.set_ylim([0.0008, 1])
 
-    ax.set_xlabel("Rescaled " + r'$\mathrm{ln}$' + " relative abundance", fontsize=14)
+    ax.set_xlabel("Rescaled " + r'$\mathrm{log}_{e}$' + " relative abundance", fontsize=14)
     ax.set_ylabel("Probability density", fontsize=14)
+
+    ax.set_title('Abundance Fluctuation\nDistribution (AFD)', fontsize=16, fontweight='bold')
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)

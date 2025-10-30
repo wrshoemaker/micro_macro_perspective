@@ -145,8 +145,12 @@ def plot_mad():
     ax.set_yscale('log', base=10)
 
     ax.legend(loc='upper left', fontsize=9)
-    ax.set_xlabel("Rescaled " + r'$\mathrm{ln}$' + " mean relative abundance", fontsize=14)
+    ax.set_xlabel("Rescaled " + r'$\mathrm{log}_{e}$' + " mean relative abundance", fontsize=14)
     ax.set_ylabel("Probability density", fontsize=14)
+
+
+    ax.set_title('Mean Abundance\nDistribution (MAD)', fontsize=16, fontweight='bold')
+
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
     fig_name = "%smad.png" % config.analysis_directory

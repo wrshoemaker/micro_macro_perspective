@@ -12,3 +12,7 @@ environment_name_dict = {'oralcavity': 'Human oral', 'skin': 'Human skin', 'fece
 sname_to_environment_dict = {'lake':'Lake', 'seawater':'Environmental Aquatic Marine', 'glacier':'Glacier', 'gut1':'GUT', 'oral1':'ORAL', 'sludge':'activatedsludge', 'river':'River', 'soil':'Environmental Terrestrial Soil'}
 
 
+
+# for example plots
+id_val_example = 'SRP056641 GUT'
+environment_example = 'GUT'

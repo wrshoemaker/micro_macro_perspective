@@ -63,6 +63,9 @@ ax.yaxis.set_tick_params(labelsize=8)
 ax.set_xlabel("Mean relative abundance, " + r'$\bar{x}_{i}$', fontsize=14)
 ax.set_ylabel("Variance of relative abundance, " + r'$\sigma^{2}_{x_{i}}$', fontsize=14)
 
+ax.set_title("Taylor's Law", fontsize=16, fontweight='bold')
+
+
 
 fig.subplots_adjust(hspace=0.25, wspace=0.15)
 fig_name = "%staylors_law.png" % config.analysis_directory

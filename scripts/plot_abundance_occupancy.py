@@ -12,8 +12,8 @@ import stats_utils
 
 
 
-id_val = 'SRP056641 GUT'
-environment = 'GUT'
+id_val = plot_utils.id_val_example
+environment = plot_utils.environment_example
 # gut1
 nbins = 12
 min_mean_abund = 10**-7
@@ -117,12 +117,17 @@ bin_centers_log10_pred, x_means_log10_pred, y_means_log10_pred = data_utils.bin_
 
 fig, ax = plt.subplots(figsize=(4,4))
 
-ax.scatter(10**x_means_log10_obs, 10**y_means_log10_obs, marker=plot_utils.environment_shape_dict[environment], facecolors=plot_utils.environment_facecolor_dict[environment], edgecolors=plot_utils.environment_cmap_dict[environment])
-ax.plot(10**x_means_log10_pred, 10**y_means_log10_pred, 'k', lw=2, ls='-', zorder=2)
+ax.scatter(10**x_means_log10_obs, 10**y_means_log10_obs,zorder=2,  marker=plot_utils.environment_shape_dict[environment], facecolors=plot_utils.environment_facecolor_dict[environment], edgecolors=plot_utils.environment_cmap_dict[environment])
+ax.plot(10**x_means_log10_pred, 10**y_means_log10_pred, 'k', lw=2, ls='-', zorder=1, label='Prediction')
+
+
+ax.set_title('Abundance-Occupancy\nRelationship (AOR)', fontsize=16, fontweight='bold')
 
 
 ax.set_xscale('log', base=10)
 ax.set_yscale('log', base=10)
+
+ax.legend(loc='upper left', fontsize=9)
 
 ax.xaxis.set_tick_params(labelsize=8)
 ax.yaxis.set_tick_params(labelsize=8)
