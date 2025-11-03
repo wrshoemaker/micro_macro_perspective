@@ -58,6 +58,7 @@ def predicted_sp(N, mu, sigma, beta, sp_tot):
 def predicted_shannonindex(N, mu, sigma, beta, sp_tot):
 
     s = []
+    sp_tot = int(round(sp_tot)) 
     for _ in range(100):
         eta = numpy.random.normal(loc=mu, scale=sigma, size=sp_tot)
         prob = beta / (beta + N * numpy.exp(eta))
@@ -66,7 +67,7 @@ def predicted_shannonindex(N, mu, sigma, beta, sp_tot):
         k = nbinom.rvs(n=beta, p=prob)
         
         # Normalize nonzero counts
-        k = k[k > 0] / N
+        k = k[k > 0].astype(float) / N
         
         if len(k) > 0:
             shannon_val = -numpy.sum(k * numpy.log(k))

@@ -59,7 +59,7 @@ def plot_afd():
         density = density[to_plot_idx]
         density_all.append(density)
 
-        ax.scatter(bin_centers, density, marker=plot_utils.environment_shape_dict[environment], facecolors=plot_utils.environment_facecolor_dict[environment], edgecolors=plot_utils.environment_cmap_dict[environment], label=plot_utils.environment_name_dict[environment])
+        ax.scatter(bin_centers, density, marker=plot_utils.environment_shape_dict[environment], facecolors=plot_utils.environment_facecolor_dict[environment], edgecolors=plot_utils.environment_cmap_dict[environment])#, label=plot_utils.environment_name_dict[environment])
 
 
 
@@ -97,7 +97,7 @@ def plot_afd():
     ax.set_xlabel("Rescaled " + r'$\mathrm{log}_{e}$' + " relative abundance", fontsize=14)
     ax.set_ylabel("Probability density", fontsize=14)
 
-    ax.set_title('Abundance Fluctuation\nDistribution (AFD)', fontsize=16, fontweight='bold')
+    #ax.set_title('Abundance Fluctuation\nDistribution (AFD)', fontsize=16, fontweight='bold')
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)

@@ -117,7 +117,7 @@ bin_centers_log10_pred, x_means_log10_pred, y_means_log10_pred = data_utils.bin_
 
 fig, ax = plt.subplots(figsize=(4,4))
 
-ax.scatter(10**x_means_log10_obs, 10**y_means_log10_obs,zorder=2,  marker=plot_utils.environment_shape_dict[environment], facecolors=plot_utils.environment_facecolor_dict[environment], edgecolors=plot_utils.environment_cmap_dict[environment])
+ax.scatter(10**x_means_log10_obs, 10**y_means_log10_obs,zorder=2, linewidth=3, marker=plot_utils.environment_shape_dict[environment], facecolors=plot_utils.environment_facecolor_dict[environment], edgecolors=plot_utils.environment_cmap_dict[environment])
 ax.plot(10**x_means_log10_pred, 10**y_means_log10_pred, 'k', lw=2, ls='-', zorder=1, label='Prediction')
 
 

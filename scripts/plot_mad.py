@@ -149,7 +149,7 @@ def plot_mad():
     ax.set_ylabel("Probability density", fontsize=14)
 
 
-    ax.set_title('Mean Abundance\nDistribution (MAD)', fontsize=16, fontweight='bold')
+    #ax.set_title('Mean Abundance\nDistribution (MAD)', fontsize=16, fontweight='bold')
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
