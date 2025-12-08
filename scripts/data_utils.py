@@ -219,6 +219,51 @@ def get_mad_grilli_data():
 
 
 
+def matching_pairs(t, delta_t):
+    
+    t = numpy.asarray(t)
+    
+    index_of = {time: idx for idx, time in enumerate(t)}
+    
+    pairs = []
+    for i, ti in enumerate(t):
+        target = ti + delta_t
+        if target in index_of:
+            j = index_of[target]
+            if j > i:
+                pairs.append((i, j))
+    
+    return pairs
+
+
+def discretized_growth_rate(t, x, delta_t, divide_by_delta_t=True):
+    
+    t = numpy.asarray(t)
+    x = numpy.asarray(x)
+
+    pairs = matching_pairs(t, delta_t)
+
+    t_mid_all = []
+    g_all = []
+    for i, j in pairs:
+        
+        if x[i] <= 0 or x[j] <= 0:
+            raise ValueError(f"X contains non-positive value at index {i} or {j}; log undefined.")
+        
+        #dt = t[j] - t[i]
+        g = (numpy.log(x[j]) - numpy.log(x[i]))
+
+        if divide_by_delta_t == True:
+            g = g / delta_t
+        
+        t_mid_all.append(0.5 * (t[i] + t[j]))
+        g_all.append(g)
+
+    
+    return numpy.asarray([t_mid_all]), numpy.array(g_all)
+
+
+
 
 if __name__ == "__main__":
 
