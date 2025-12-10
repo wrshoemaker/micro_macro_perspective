@@ -1,1 +1,3 @@
 .DS_Store
+./data/phylo_dist_dict.pickle
+data/phylo_dist_dict.pickle

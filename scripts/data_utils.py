@@ -244,6 +244,7 @@ def discretized_growth_rate(t, x, delta_t, divide_by_delta_t=True):
     pairs = matching_pairs(t, delta_t)
 
     t_mid_all = []
+    x_all = []
     g_all = []
     for i, j in pairs:
         
@@ -257,10 +258,67 @@ def discretized_growth_rate(t, x, delta_t, divide_by_delta_t=True):
             g = g / delta_t
         
         t_mid_all.append(0.5 * (t[i] + t[j]))
+        x_all.append(x[i])
         g_all.append(g)
 
     
-    return numpy.asarray([t_mid_all]), numpy.array(g_all)
+    return numpy.asarray([t_mid_all]), numpy.asarray(x_all), numpy.array(g_all)
+
+
+
+def temporal_dissimilarity(t, n, delta_t, min_n=10):
+
+    t = numpy.asarray(t)
+    n = numpy.asarray(n)
+
+    pairs = matching_pairs(t, delta_t)
+
+    if len(pairs) <= min_n:
+        diss = None
+
+    else:
+
+        diss = 0
+        for i, j in pairs:
+
+            n_t = n[i]
+            n_t_plus_delta = n[j]
+
+            d = n_t - n_t_plus_delta
+            s = n_t + n_t_plus_delta
+
+            diss+=((d**2) - s) / (s *(s-1))
+
+        diss = diss/len(pairs)
+
+
+    return diss
+
+
+def temporal_dissimilarity_all_delta(t, n, min_n=10):
+
+    delta_t_all = numpy.arange(1, max(t)-min(t))
+
+    delta_t_plot = [0]
+    diss_plot = [0]
+    for delta_t in delta_t_all:
+
+        diss = temporal_dissimilarity(t, n, delta_t)
+
+        #print(delta_t, diss)
+
+        if diss != None:
+
+            delta_t_plot.append(delta_t)
+            diss_plot.append(diss)
+
+
+    delta_t_plot = numpy.asarray(delta_t_plot)
+    diss_plot = numpy.asarray(diss_plot)
+    diss_inf = numpy.mean(diss_plot[delta_t_plot >= 10])
+
+    return delta_t_plot, diss_plot, diss_inf
+
 
 
 
