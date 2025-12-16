@@ -78,7 +78,7 @@ bin_centers = numpy.sqrt(bin_edges[:-1] * bin_edges[1:])
 
 print(len(asv_pair_all))
 
-ax.plot(bin_centers[to_plot], mean_y[to_plot],  ls='-', lw=4, alpha=1, c=c_blue, zorder=2)
+ax.plot(bin_centers[to_plot], mean_y[to_plot],  ls='-', lw=4 , alpha=1, c=c_blue, zorder=2)
 ax.set_xscale('log', base=10)
 ax.axhline(y=0, lw=4, ls=':', c='k', zorder=3)
 

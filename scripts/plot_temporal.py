@@ -126,8 +126,6 @@ def plot_mean_vs_delta():
         x_mean_all.append(x_mean)
         mean_abs_delta_all.append(mean_abs_delta)
 
-    
-    
     slope, intercept, r_value, p_value, std_err = stats.linregress(numpy.log10(x_mean_all), numpy.log10(mean_abs_delta_all))
     slope_env=1
     slope_demog=0.66
@@ -149,14 +147,14 @@ def plot_mean_vs_delta():
     ax.set_xscale('log', base=10)
     ax.set_yscale('log', base=10)
 
-    ax.set_xlabel("Mean abundance, " + r'$\bar{x}_{i}$', fontsize=14)
-    ax.set_ylabel("Mean change in abundance b/w\nobservations,  " + r'$\overline{|\Delta x_{i}|}$', fontsize=14)
+    ax.set_xlabel("Mean relative abundance, " + r'$\bar{x}_{i}$', fontsize=14)
+    ax.set_ylabel("Mean change in\nabundance b/w observations, " + r'$\overline{|\Delta x_{i}|}$', fontsize=14)
 
 
-    legend_elements = [Line2D([0], [0], color='k', lw=4, ls='-', label='Environmental'),
-                       Line2D([0], [0], color='k', lw=4, ls=':', label='Demographic')]
+    legend_elements = [Line2D([0], [0], color='k', lw=4, ls='-', label='Environment'),
+                       Line2D([0], [0], color='k', lw=4, ls=':', label='Demography')]
 
-    ax.legend(handles=legend_elements, loc='upper left', fontsize=11, title = "Noise type")
+    ax.legend(handles=legend_elements, loc='upper left', fontsize=11, title = "Noise source", title_fontsize=11)
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
     fig_name = "%sfig2_mean_vs_delta.png" % config.analysis_directory
@@ -236,11 +234,9 @@ def plot_hust(min_n_g=10):
     ax.set_xscale('log', base=10)
     ax.set_yscale('log', base=10)
 
-
     ax.legend(loc='upper left', fontsize=11 )
-
     ax.set_xlabel("Time b/w observations (days), " + r'$\Delta t$', fontsize=14)
-    ax.set_ylabel("Variance of change\nin abundances, " + r'$\mathrm{Var}(\Delta x_{i} | \Delta t)$', fontsize=14)
+    ax.set_ylabel("Variance of change in log-fold\nabundance, " + r'$\mathrm{Var}(\Delta \mathrm{ln} \, x_{i} | \Delta t)$', fontsize=14)
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
@@ -269,7 +265,7 @@ def plot_g_dist(min_n_g=200):
 
         rel_abundance = numpy.asarray(mle_dict[target_dataset][target_host][asv]['rel_abundance'])
 
-        t_mid, x, g = data_utils.discretized_growth_rate(days, rel_abundance, 1, divide_by_delta_t=False)
+        t_mid, x, g = data_utils.discretized_growth_rate(days, rel_abundance, 1, divide_by_delta_t=True)
         g_all.append(g)
 
 
@@ -330,6 +326,9 @@ def plot_autocorr():
 
     for asv in  mle_dict[target_dataset][target_host].keys():
 
+        if asv != 'TACGGAGGATCCGAGCGTTATCCGGATTTATTGGGTTTAAAGGGAGCGTAGGTGGATTGTTAAGTCAGTTGTGAAAGTTTGCGGCTCAACCGTAAAATTGCAGTTGAAACTGGCAGTCTT':
+            continue
+
         rel_abundance = numpy.asarray(mle_dict[target_dataset][target_host][asv]['rel_abundance'])
 
         delay_days_all, autocorr_all = stats_utils.autocorrelation_by_days(rel_abundance, days, min_n_autocorr_values=min_n_autocorr_values)
@@ -347,7 +346,7 @@ def plot_autocorr():
         if autocorr_all[-1] >= 0.8:
             continue
 
-        ax.plot(delay_days_all, autocorr_all, lw=1, c=c_blue, ls='-', alpha=0.7)
+        ax.plot(delay_days_all, autocorr_all, lw=lw, c=c_blue, ls='-', alpha=1)
 
 
     ax.set_xlim([0, 5])
@@ -357,7 +356,10 @@ def plot_autocorr():
     ax.set_ylabel("Temporal autocorrelation", fontsize=14)
 
     ax.axhline(y=0, lw=lw, ls=':', c='k', label='No linear correlation', zorder=2)
-    ax.legend(loc='upper right', fontsize=10)
+    ax.legend(loc='upper right', fontsize=11)
+
+    ax.xaxis.set_tick_params(labelsize=tick_labelsize)
+    ax.yaxis.set_tick_params(labelsize=tick_labelsize)
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
@@ -387,7 +389,6 @@ def plot_psd():
         if asv != 'TACGGAGGATCCGAGCGTTATCCGGATTTATTGGGTTTAAAGGGAGCGTAGGTGGATTGTTAAGTCAGTTGTGAAAGTTTGCGGCTCAACCGTAAAATTGCAGTTGAAACTGGCAGTCTT':
             continue
 
-        #print(asv)
         #print(mle_dict[target_dataset][target_host][asv]['x_mean'])
 
         rel_abundance = numpy.asarray(mle_dict[target_dataset][target_host][asv]['rel_abundance'])
@@ -422,7 +423,10 @@ def plot_psd():
     ax.set_xlabel("Frequency", fontsize=14)
     ax.set_ylabel("Power Spectral Density (PSD)", fontsize=14)
 
-    ax.legend(loc='upper right', fontsize=10, title='Noise type')
+    ax.xaxis.set_tick_params(labelsize=tick_labelsize)
+    ax.yaxis.set_tick_params(labelsize=tick_labelsize)
+
+    ax.legend(loc='upper right', fontsize=11, title='Noise color', title_fontsize=11)
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
@@ -431,7 +435,7 @@ def plot_psd():
     plt.close()
 
 
-def plot_crosscorr():
+def plot_crosscorr_old():
 
     sys.stderr.write("Plottting cross-correlation.....\n")
 
@@ -454,7 +458,7 @@ def plot_crosscorr():
 
         #print(lag_list)
 
-        ax.plot(lag_list, corr_list, lw=1, c=c_blue, ls='-', alpha=0.7)
+        ax.plot(lag_list, corr_list, lw=lw, c=c_blue, ls='-', alpha=0.7)
 
 
     ax.set_xlim([-5, 5])
@@ -463,13 +467,54 @@ def plot_crosscorr():
     ax.set_xlabel("Time b/w observations (days), " + r'$\Delta t$', fontsize=14)
     ax.set_ylabel("Temporal cross-correlation", fontsize=14)
 
-    ax.axvline(x=0, lw=lw, ls=':', c='k', zorder=2)
+    ax.axhline(y=0, lw=lw, ls=':', c='k', zorder=2)
     
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
     fig_name = "%sfig2_crosscorr.png" % config.analysis_directory
     fig.savefig(fig_name, format='png', bbox_inches = "tight", pad_inches = 0.4, dpi = 600)
     plt.close()
+
+
+
+
+def plot_crosscorr():
+
+    sys.stderr.write("Plottting cross-correlation.....\n")
+
+    days = mle_dict[target_dataset][target_host][list(mle_dict[target_dataset][target_host].keys())[0]]['days']
+    asv_all = list(mle_dict[target_dataset][target_host].keys())
+    asv_pair_all = list(combinations(asv_all, 2))
+
+    fig, ax = plt.subplots(figsize=(size_x, size_y))
+
+    asv_i = 'TACGTAGGGGGCAAGCGTTATCCGGATTTACTGGGTGTAAAGGGAGCGTAGACGGTGTGGCAAGTCTGATGTGAAAGGCATGGGCTCAACCTGTGGACTGCATTGGAAACTGTCATACTT'
+    asv_j = 'TACGTAGGGGGCAAGCGTTATCCGGATTTACTGGGTGTAAAGGGAGCGTAGACGGACTGGCAAGTCTGATGTGAAAGGCGGGGGCTCAACCCCTGGACTGCATTGGAAACTGTTAGTCTT'
+
+    rel_abundance_i = numpy.asarray(mle_dict[target_dataset][target_host][asv_i]['rel_abundance'])
+    rel_abundance_j = numpy.asarray(mle_dict[target_dataset][target_host][asv_j]['rel_abundance'])
+
+    lag_list, corr_list = stats_utils.crosscorrelation_by_days(rel_abundance_i, rel_abundance_j, days, min_n_corr_values=25)
+
+    ax.plot(lag_list, corr_list, lw=lw, c=c_blue, ls='-', alpha=1, zorder=2)
+
+    ax.set_xlim([-5, 5])
+    ax.set_ylim([-1, 1])
+
+    ax.set_xlabel("Time b/w observations (days), " + r'$\Delta t$', fontsize=14)
+    ax.set_ylabel("Temporal cross-correlation", fontsize=14)
+
+    ax.xaxis.set_tick_params(labelsize=tick_labelsize)
+    ax.yaxis.set_tick_params(labelsize=tick_labelsize)
+
+    ax.axhline(y=0, lw=lw, ls=':', c='k', zorder=1)
+    
+
+    fig.subplots_adjust(hspace=0.25, wspace=0.15)
+    fig_name = "%sfig2_crosscorr.png" % config.analysis_directory
+    fig.savefig(fig_name, format='png', bbox_inches = "tight", pad_inches = 0.4, dpi = 600)
+    plt.close()
+
 
 
 
@@ -501,8 +546,8 @@ def plot_mean_vs_logfold():
     ax.yaxis.set_tick_params(labelsize=tick_labelsize)
     ax.set_xscale('log', base=10)
 
-    ax.set_xlabel("Abundance, " + r'$x_{i}(t)$', fontsize=14)
-    ax.set_ylabel("Log-fold change in abundance, " + r'$g_{i}(\Delta t)$', fontsize=14)
+    ax.set_xlabel("Relative abundance, " + r'$x_{i}(t)$', fontsize=14)
+    ax.set_ylabel("Log-fold change in abundance, " + r'$\Delta \mathrm{ln} \, x_{i}$', fontsize=14)
 
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
@@ -619,16 +664,25 @@ if __name__ == "__main__":
 
     #plot_diss()
 
-    #plot_psd()
+    #plot_corr_dist()
 
-    plot_corr_dist()
+    #plot_autocorr()
 
 
     #plot_hust()
 
     #plot_g_dist()
 
-    #plot_crosscorr()
+    #plot_hust()
+    #plot_mean_vs_delta()
+    #plot_mean_vs_logfold()
+
+    #plot_mean_vs_delta()
+    plot_crosscorr()
+
+    #plot_psd()
+
+    #plot_autocorr()
 
     # to-do
     #temporal dissimilarity
