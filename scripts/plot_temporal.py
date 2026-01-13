@@ -23,13 +23,13 @@ target_host = 'M3'
 min_n_autocorr_values = 20
 target_asv = 'TACGGAGGATCCGAGCGTTATCCGGATTTATTGGGTTTAAAGGGAGCGTAGGTGGATTGTTAAGTCAGTTGTGAAAGTTTGCGGCTCAACCGTAAAATTGCAGTTGAAACTGGCAGTCTT'
 
-c_blue='#1E90FF'
-c_orange='#EB5900'
-tick_labelsize=8
+c_blue=plot_utils.c_blue
+c_orange=plot_utils.c_orange
+tick_labelsize=plot_utils.tick_labelsize
 
-size_x, size_y = 4,4
-lw=3
-scatter_size=40
+size_x, size_y = plot_utils.size_x, plot_utils.size_y
+lw=plot_utils.lw
+scatter_size=plot_utils.scatter_size
 #target_
 
 
@@ -89,7 +89,7 @@ def plot_sojourn_time():
                        Line2D([0], [0], color=c_orange, lw=4, ls='-', label='Residence time, ' + r'$T_{\mathrm{residence}}$'),
                        Line2D([0], [0], color=c_orange, lw=4, ls=':', label='Return time, ' + r'$T_{\mathrm{return}}$')]
 
-    ax.legend(handles=legend_elements, loc='lower left', fontsize=11)
+    ax.legend(handles=legend_elements, loc='lower left', fontsize=13)
 
     ax.xaxis.set_tick_params(labelsize=tick_labelsize)
     ax.yaxis.set_tick_params(labelsize=tick_labelsize)
@@ -222,8 +222,8 @@ def plot_hust(min_n_g=10):
 
     fig, ax = plt.subplots(figsize=(size_x, size_y))
 
-    ax.plot(10**x_range, 10**y_pred, ls='--', lw=lw, c='k', zorder=2, label=r'$H = 0.5$' + '   (diffusion)')
-    ax.plot(10**x_range, 10**y_pred_diff, ls=':', lw=lw, c='k', zorder=2, label=r'$H \approx $' +  str(round(slope, 2)) + ' (subdiffusion)')
+    ax.plot(10**x_range, 10**y_pred_diff, ls=':', lw=lw, c='k', zorder=2, label=r'$H = 0.5$' + '   (diffusion)')
+    ax.plot(10**x_range, 10**y_pred, ls='--', lw=lw, c='k', zorder=2, label=r'$H \approx $' +  str(round(slope, 2)) + ' (subdiffusion)')
 
     ax.scatter(delta_t_all, var_g_all, s=scatter_size, c=c_blue, zorder=1)
 
@@ -415,6 +415,8 @@ def plot_psd():
         ax.axhline(y=10**intercept, ls=':', lw=lw, c='k', zorder=2, label='White')
         ax.plot(10**x_range, 10**(-1*x_range + intercept), ls='--', lw=lw, c='k', zorder=2, label='Pink')
 
+        ax.plot(10**x_range, 10**(-2*x_range + intercept), ls='-', lw=lw, c='k', zorder=2, label='Brownian')
+
     
     # peak at day = 1 means daily oscillation
     ax.set_xscale('log', base=10)
@@ -557,6 +559,48 @@ def plot_mean_vs_logfold():
 
 
 
+def plot_mean_vs_logfold_slopes():
+
+    
+    #asv_all = list(mle_dict[target_dataset][target_host].keys())
+
+    slope_all = []
+
+    for host in list(mle_dict[target_dataset].keys()):
+
+        days = numpy.asarray(mle_dict[target_dataset][host][list(mle_dict[target_dataset][host].keys())[0]]['days'])
+        days = days - min(days)
+        
+        for asv in list(mle_dict[target_dataset][host].keys()):
+            
+            rel_abundance = numpy.asarray(mle_dict[target_dataset][host][asv]['rel_abundance'])
+            t_mid, x, g = data_utils.discretized_growth_rate(days, rel_abundance, 1, divide_by_delta_t=False) 
+
+            slope, intercept, r_value, p_value, std_err = stats.linregress(numpy.log10(x), g)
+            slope_all.append(slope)
+
+
+    fig, ax = plt.subplots(figsize=(size_x, size_y))
+
+    hist, bin_edges = numpy.histogram(slope_all, bins=7, density=True)
+    hist = hist / hist.sum()
+    bin_midpoints = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+    #ax.axvline(x=0, lw=lw, ls=':', c='k', zorder=3)
+    ax.step(bin_midpoints, hist, where='mid', lw=lw, c=c_blue, zorder=2, label='Observed')#, label=r'$\Delta t = $' + str(delta_t))
+
+    ax.set_xlabel("Pairwise correlation", fontsize=14)
+    ax.set_ylabel("Scaled probability density", fontsize=14)
+    ax.xaxis.set_tick_params(labelsize=tick_labelsize)
+    ax.yaxis.set_tick_params(labelsize=tick_labelsize)
+
+    fig.subplots_adjust(hspace=0.25, wspace=0.15)
+    fig_name = "%sfig2_mean_vs_logfold_slopes.png" % config.analysis_directory
+    fig.savefig(fig_name, format='png', bbox_inches = "tight", pad_inches = 0.4, dpi = 600)
+    plt.close()
+
+
+
 def plot_diss():
 
 
@@ -660,6 +704,8 @@ if __name__ == "__main__":
  
     sys.stderr.write("Plottting temporal patterns.....\n")
 
+    #plot_sojourn_time()
+
     #plot_mean_vs_logfold()
 
     #plot_diss()
@@ -677,8 +723,10 @@ if __name__ == "__main__":
     #plot_mean_vs_delta()
     #plot_mean_vs_logfold()
 
+    plot_mean_vs_logfold_slopes()
+
     #plot_mean_vs_delta()
-    plot_crosscorr()
+    #plot_crosscorr()
 
     #plot_psd()
 

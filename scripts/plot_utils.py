@@ -17,3 +17,10 @@ sname_to_environment_dict = {'lake':'Lake', 'seawater':'Environmental Aquatic Ma
 id_val_example = 'SRP056641 GUT'
 environment_example = 'GUT'
 sname_example = 'gut1'
+
+c_blue='#1E90FF'
+c_orange='#EB5900'
+tick_labelsize=8
+size_x, size_y = 4,4
+lw=3
+scatter_size=40

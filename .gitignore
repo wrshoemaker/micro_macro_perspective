@@ -1,3 +1,11 @@
 .DS_Store
 ./data/phylo_dist_dict.pickle
 data/phylo_dist_dict.pickle
+data/map/
+data/Fig3ac_SF4a_mopsEZglu_withmetadata.csv
+data/Fig3bd_SF4b_mopsEZsuc_withmetadata.csv
+data/20130801_INPondDataMod.csv
+data/VirMic_data.csv
+data/Fig4cd_data.txt
+data/Diversity_data.csv
+data/RefugePonds.csv
