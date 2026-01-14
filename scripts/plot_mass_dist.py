@@ -30,7 +30,7 @@ file_dict = {'glu': 'Fig3ac_SF4a_mopsEZglu_withmetadata', 'suc': 'Fig3bd_SF4b_mo
 c_sources = ['glu', 'suc']
 target_time = {'glu':'3.56666666666667', 'suc': '3.56666666666667'}
 rep_dict = {'glu': 4, 'suc': 4}
-c_color = {'glu': '#1E90FF', 'suc': '#EB5900'}
+c_color = {'glu': '#F2B342', 'suc': '#EA573D'}
 #c = 'glu'
 c_label = {'glu': 'Glucose', 'suc': 'Succinate'}
 
@@ -94,7 +94,7 @@ ax.tick_params(axis='x', labelsize=tick_labelsize)
 ax.yaxis.set_tick_params(labelsize=tick_labelsize)
 
 
-ax.legend(loc='upper left')
+#ax.legend(loc='upper left')
 
 fig.subplots_adjust(hspace=0.25, wspace=0.15)
 fig_name = "%smass_dist.png" % config.analysis_directory
