@@ -48,12 +48,12 @@ ax.text(0.03, 0.2, "Infection     Growth      Lysis ", fontsize=14, color='k')#,
 #ax.text(0.03, 0.1, "Slow (succinate)", fontsize=14, color='#EA573D')#, fontweight='bold')
 #ax.text(0.5, 0.1, "Fast (glucose)", fontsize=14, color='#F2B342')#, fontweight='bold')
 
-#ax.text(0.1, 0.1, "Observed, " + r'$y \propto 1.4 \cdot x$', fontsize=14, color='k')#, fontweight='bold')
+ax.text(0.1, 0.1, "Observed, " + r'$y = 1.4 \cdot x$', fontsize=14, color='k')#, fontweight='bold')
 
 #ax.text(0.1, 0.1, "Time, " + r'$t$', fontsize=14, color='k')#, fontweight='bold')
 #ax.text(0.1, 0.1, "Relative abundance, " + r'$x_{i}(t)$', fontsize=14, color='k')#, fontweight='bold')
 
-ax.set_xlabel("Relative\nabundance, " + r'$x_{i}(t)$', fontsize=14)
+#ax.set_xlabel("Relative\nabundance, " + r'$x_{i}(t)$', fontsize=14)
 
 
 fig.subplots_adjust(hspace=0.25, wspace=0.15)

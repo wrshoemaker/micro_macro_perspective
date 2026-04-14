@@ -85,11 +85,16 @@ def plot_sojourn_time():
     mixture_smf = numpy.cumsum(mixture_pdf[::-1])[::-1]
     ax.plot(sojourn_range, mixture_smf, lw=lw, c=c_blue, ls='-')
 
-    legend_elements = [Line2D([0], [0], color=c_blue, lw=4, ls='-', label='Sojourn time, ' + r'$T_{\mathrm{sojourn}}$'),
-                       Line2D([0], [0], color=c_orange, lw=4, ls='-', label='Residence time, ' + r'$T_{\mathrm{residence}}$'),
-                       Line2D([0], [0], color=c_orange, lw=4, ls=':', label='Return time, ' + r'$T_{\mathrm{return}}$')]
+    #legend_elements = [Line2D([0], [0], color=c_blue, lw=4, ls='-', label='Sojourn time, ' + r'$T_{\mathrm{sojourn}}$'),
+    #                   Line2D([0], [0], color=c_orange, lw=4, ls='-', label='Residence time, ' + r'$T_{\mathrm{residence}}$'),
+    #                   Line2D([0], [0], color=c_orange, lw=4, ls=':', label='Return time, ' + r'$T_{\mathrm{return}}$')]
 
-    ax.legend(handles=legend_elements, loc='lower left', fontsize=13)
+    legend_elements = [Line2D([0], [0], color=c_blue, lw=4, ls='-', label=r'$T_{\mathrm{sojourn}}$'),
+                       Line2D([0], [0], color=c_orange, lw=4, ls='-', label=r'$T_{\mathrm{residence}}$'),
+                       Line2D([0], [0], color=c_orange, lw=4, ls=':', label=r'$T_{\mathrm{return}}$')]
+
+
+    ax.legend(handles=legend_elements, loc='lower left', fontsize=16)
 
     ax.xaxis.set_tick_params(labelsize=tick_labelsize)
     ax.yaxis.set_tick_params(labelsize=tick_labelsize)
@@ -128,7 +133,7 @@ def plot_mean_vs_delta():
 
     slope, intercept, r_value, p_value, std_err = stats.linregress(numpy.log10(x_mean_all), numpy.log10(mean_abs_delta_all))
     slope_env=1
-    slope_demog=0.66
+    slope_demog=0.5
 
     x_range =  numpy.linspace(min(numpy.log10(x_mean_all)), max(numpy.log10(x_mean_all)), 10000)
     y_pred_env = slope_env*x_range + intercept
@@ -151,10 +156,10 @@ def plot_mean_vs_delta():
     ax.set_ylabel("Mean change in\nabundance b/w observations, " + r'$\overline{|\Delta x_{i}|}$', fontsize=14)
 
 
-    legend_elements = [Line2D([0], [0], color='k', lw=4, ls='-', label='Environment'),
-                       Line2D([0], [0], color='k', lw=4, ls=':', label='Demography')]
+    legend_elements = [Line2D([0], [0], color='k', lw=4, ls='-', label='Environment (SLM)'),
+                       Line2D([0], [0], color='k', lw=4, ls=':', label='Demography (BDM)')]
 
-    ax.legend(handles=legend_elements, loc='upper left', fontsize=11, title = "Noise source", title_fontsize=11)
+    ax.legend(handles=legend_elements, loc='lower right', fontsize=11, title = "Noise source", title_fontsize=11)
 
     fig.subplots_adjust(hspace=0.25, wspace=0.15)
     fig_name = "%sfig2_mean_vs_delta.png" % config.analysis_directory
@@ -396,8 +401,11 @@ def plot_psd():
         #psd = signal.lombscargle(days, rel_abundance - x_mean, omega)
         #psd = numpy.sqrt(4*(psd/len(days)))
 
+        y = numpy.log10(rel_abundance/x_mean)
+
         # 128
-        f, psd = signal.welch(rel_abundance - x_mean, fs=1, nperseg=80, scaling='density')
+        #f, psd = signal.welch(rel_abundance - x_mean, fs=1, nperseg=80, scaling='density')
+        f, psd = signal.welch(y, fs=1, nperseg=80, scaling='density')
         to_keep_idx = f>0
         f = f[to_keep_idx]
         psd = psd[to_keep_idx]
@@ -414,7 +422,6 @@ def plot_psd():
 
         ax.axhline(y=10**intercept, ls=':', lw=lw, c='k', zorder=2, label='White')
         ax.plot(10**x_range, 10**(-1*x_range + intercept), ls='--', lw=lw, c='k', zorder=2, label='Pink')
-
         ax.plot(10**x_range, 10**(-2*x_range + intercept), ls='-', lw=lw, c='k', zorder=2, label='Brownian')
 
     
@@ -435,6 +442,7 @@ def plot_psd():
     fig_name = "%sfig2_psd.png" % config.analysis_directory
     fig.savefig(fig_name, format='png', bbox_inches = "tight", pad_inches = 0.4, dpi = 600)
     plt.close()
+
 
 
 def plot_crosscorr_old():
@@ -706,6 +714,8 @@ if __name__ == "__main__":
 
     #plot_sojourn_time()
 
+    plot_psd()
+
     #plot_mean_vs_logfold()
 
     #plot_diss()
@@ -723,7 +733,9 @@ if __name__ == "__main__":
     #plot_mean_vs_delta()
     #plot_mean_vs_logfold()
 
-    plot_mean_vs_logfold_slopes()
+    #plot_mean_vs_logfold_slopes()
+
+    #plot_mean_vs_delta()
 
     #plot_mean_vs_delta()
     #plot_crosscorr()
